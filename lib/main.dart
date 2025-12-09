@@ -10,6 +10,7 @@ import 'features/favourites/model/favourites_model.dart';
 import 'features/favourites/view/favourites_screen.dart';
 import 'features/forecast/view/forecast_screen.dart';
 import 'features/home/view/home_screen.dart';
+import 'features/region/view/regionfilter_screen.dart';
 import 'features/settings/view_model/settings_view_model.dart';
 
 const String vectorAlertTask = "weatherAlertTask";
@@ -120,6 +121,7 @@ class _MainNavigationState extends State<MainNavigation>
     HomeScreen(),
     FavouritesScreen(),
     ForecastScreen(city: "London"), // Default/Demo city
+    RegionFilterScreen(),
     AlertsScreen(),
   ];
 
@@ -138,6 +140,30 @@ class _MainNavigationState extends State<MainNavigation>
       end: 1.0,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
     _controller.forward();
+
+    // Add dummy alerts if empty
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final alertsBox = Hive.box<AlertModel>('alerts');
+      if (alertsBox.isEmpty) {
+        alertsBox.addAll([
+          AlertModel(
+            title: "Heavy Rain",
+            message: "Heavy rain expected in London this evening.",
+            dateTime: DateTime.now(),
+          ),
+          AlertModel(
+            title: "High Wind",
+            message: "Strong winds in Tokyo tomorrow morning.",
+            dateTime: DateTime.now().add(const Duration(days: 1)),
+          ),
+          AlertModel(
+            title: "Heat Wave",
+            message: "Extreme heat warning for Dubai.",
+            dateTime: DateTime.now().subtract(const Duration(hours: 5)),
+          ),
+        ]);
+      }
+    });
   }
 
   void _onItemTapped(int index) {
@@ -184,6 +210,7 @@ class _MainNavigationState extends State<MainNavigation>
             icon: Icon(Icons.show_chart),
             label: 'Forecast',
           ),
+          NavigationDestination(icon: Icon(Icons.public), label: 'Region'),
           NavigationDestination(
             icon: Icon(Icons.notifications_outlined),
             selectedIcon: Icon(Icons.notifications),
