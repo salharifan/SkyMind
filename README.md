@@ -4,7 +4,7 @@
 ![Flutter](https://img.shields.io/badge/Flutter-3.9.2-02569B?logo=flutter)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-A beautiful, feature-rich weather application built with Flutter following the MVVM (Model-View-ViewModel) architecture pattern.
+A beautiful, feature-rich weather application built with Flutter following the **Feature-Based MVVM** (Model-View-ViewModel) architecture pattern.
 
 ## 📱 Features
 
@@ -34,31 +34,61 @@ A beautiful, feature-rich weather application built with Flutter following the M
 
 ## 🏗️ Architecture
 
-This project follows the **MVVM (Model-View-ViewModel)** architecture pattern with a clean, organized folder structure:
+This project follows a **Feature-Based MVVM** (Model-View-ViewModel) architecture pattern:
+
+### **Key Architectural Principles:**
+
+1. **Feature-Based Organization**: Each feature is self-contained with its own models, views, and view models
+2. **MVVM Pattern**: Clear separation between UI (View), business logic (ViewModel), and data (Model)
+3. **Shared Core**: Common services and utilities are centralized in the `core` directory
+4. **Scalability**: Easy to add new features without affecting existing code
+
+### **Folder Structure:**
 
 ```
 lib/
-├── main.dart
-├── core/
-│   ├── services/          # API, Database, and Notification services
-│   │   ├── api_service.dart
-│   │   ├── db_service.dart
-│   │   └── notification_service.dart
-│   └── utils/             # Constants and helper functions
-│       ├── constants.dart
-│       └── helpers.dart
-├── features/              # Feature-based modules
-│   ├── home/
-│   │   ├── model/         # Data models
-│   │   ├── view/          # UI screens
-│   │   └── view_model/    # Business logic & state management
-│   ├── forecast/
-│   ├── favourites/
-│   ├── alerts/
-│   ├── region/            # 🆕 Region filter feature
-│   └── settings/
-└── shared_widgets/        # Reusable UI components
+├── main.dart                  # App entry point
+├── core/                      # Shared core functionality
+│   ├── services/              # Centralized services
+│   │   ├── api_service.dart   # Weather & Forecast APIs
+│   │   ├── db_service.dart    # Hive database operations
+│   │   └── notification_service.dart  # Push notifications
+│   └── utils/                 # Shared utilities
+│       ├── constants.dart     # App-wide constants
+│       └── helpers.dart       # Helper functions
+├── features/                  # Feature-based modules (MVVM)
+│   ├── home/                  # Home feature
+│   │   ├── model/             # Weather data models
+│   │   ├── view/              # Home screen UI
+│   │   └── view_model/        # Weather business logic
+│   ├── forecast/              # Forecast feature
+│   │   ├── model/             # Forecast data models
+│   │   ├── view/              # Forecast screen UI
+│   │   └── view_model/        # Forecast business logic
+│   ├── favourites/            # Favourites feature
+│   │   ├── model/             # Favourite cities models
+│   │   ├── view/              # Favourites screen UI
+│   │   └── view_model/        # Favourites business logic
+│   ├── alerts/                # Alerts feature
+│   │   ├── model/             # Alert data models
+│   │   ├── view/              # Alerts screen UI
+│   │   └── view_model/        # Alerts business logic
+│   ├── region/                # 🆕 Region filter feature
+│   │   ├── model/             # Region data models
+│   │   ├── view/              # Region filter UI
+│   │   └── view_model/        # Region business logic
+│   └── settings/              # Settings feature
+│       ├── view/              # Settings screen UI
+│       └── view_model/        # Settings business logic
+└── shared_widgets/            # Reusable UI components
 ```
+
+### **Benefits of This Architecture:**
+- ✅ **Modularity**: Each feature is independent and self-contained
+- ✅ **Maintainability**: Easy to locate and modify feature-specific code
+- ✅ **Testability**: Clear separation makes unit testing straightforward
+- ✅ **Scalability**: Add new features without touching existing ones
+- ✅ **Team Collaboration**: Multiple developers can work on different features simultaneously
 
 ## 🛠️ Tech Stack
 
