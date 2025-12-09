@@ -1,6 +1,6 @@
 # SkyMind Weather App 🌤️
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)
 ![Flutter](https://img.shields.io/badge/Flutter-3.9.2-02569B?logo=flutter)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
@@ -12,7 +12,7 @@ A beautiful, feature-rich weather application built with Flutter following the M
 - **5-Day Forecast**: View detailed weather forecasts with interactive charts
 - **Favorite Cities**: Save and manage your favorite locations
 - **Weather Alerts**: Receive notifications for weather updates
-- **Regional Filtering**: Filter weather data by region
+- **🆕 Region Filter**: Browse and select cities by continent with popular cities quick access
 - **Customizable Settings**: 
   - Dark/Light theme toggle
   - Temperature units (Celsius/Fahrenheit)
@@ -20,6 +20,17 @@ A beautiful, feature-rich weather application built with Flutter following the M
   - Weather alert preferences
 - **Share Weather**: Share current weather information with friends
 - **Beautiful UI**: Modern, glassmorphic design with smooth animations
+
+## 🆕 What's New in v1.1.0
+
+- ✨ **Region Filter Feature**: Added comprehensive region-based city selection
+  - Browse cities by continent (Asia, Europe, North America, South America, Africa, Oceania)
+  - Quick access to 15 popular cities worldwide
+  - Expandable region cards with major cities
+  - One-tap city selection
+- 🎨 **Enhanced UI**: Region filter button added next to Forecast button
+- 🔄 **Improved Navigation**: Seamless integration with home screen weather display
+- 📱 **Better UX**: Responsive button layout with Wrap widget for better mobile experience
 
 ## 🏗️ Architecture
 
@@ -44,7 +55,7 @@ lib/
 │   ├── forecast/
 │   ├── favourites/
 │   ├── alerts/
-│   ├── region/
+│   ├── region/            # 🆕 Region filter feature
 │   └── settings/
 └── shared_widgets/        # Reusable UI components
 ```
@@ -99,16 +110,19 @@ lib/
 
 ## 📲 Download APK
 
-**Latest Release: v1.0.0**
+**Latest Release: v1.1.0** 🆕
 
-📥 [Download SkyMind-v1.0.0.apk](https://github.com/salharifan/SkyMind/releases/tag/v1.0.0)
+📥 [Download SkyMind-v1.1.0.apk](https://github.com/salharifan/SkyMind/releases/tag/v1.1.0)
 
 The APK is also available locally at:
 ```
-C:\Users\user\Downloads\SkyMind-v1.0.0.apk
+C:\Users\user\Downloads\SkyMind-v1.1.0.apk
 ```
 
-**APK Size**: ~48.5 MB
+**APK Size**: ~48.8 MB
+
+### Previous Versions
+- [v1.0.0](https://github.com/salharifan/SkyMind/releases/tag/v1.0.0) - Initial MVVM refactor
 
 ## 🔑 API Configuration
 
@@ -143,10 +157,16 @@ This project uses Git for version control with semantic versioning:
 
 - **Repository**: https://github.com/salharifan/SkyMind
 - **Current Branch**: `mvvm-refactor-v1.0.0`
-- **Latest Tag**: `v1.0.0`
+- **Latest Tag**: `v1.1.0` 🆕
 
 ### Version History
 
+- **v1.1.0** (2025-12-09): Added Region Filter feature
+  - Region-based city browsing
+  - Popular cities quick access
+  - Enhanced UI with better button layout
+  - Improved user experience
+  
 - **v1.0.0** (2025-12-09): Complete MVVM architecture refactor
   - Simplified folder structure
   - Improved code organization
@@ -206,7 +226,13 @@ If you encounter any issues or have questions:
 
 ## 🔄 Updates
 
-Stay tuned for future updates! Planned features:
+### Latest Updates (v1.1.0)
+- ✅ Region Filter feature
+- ✅ Popular cities quick access
+- ✅ Enhanced button layout
+- ✅ Better mobile responsiveness
+
+### Planned Features
 - [ ] Hourly forecast
 - [ ] Weather maps
 - [ ] Multiple language support
