@@ -49,129 +49,186 @@ class _RegionFilterScreenState extends ConsumerState<RegionFilterScreen> {
     'Amsterdam',
   ];
 
+  void _loadWeather(String city) {
+    ref.read(weatherProvider.notifier).getWeather(city);
+
+    Navigator.pop(context);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Loading weather for $city...'),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: const Text("Filter by Region"),
+        elevation: 3,
+        title: const Text(
+          "Filter by Region",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.blueAccent,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          // Popular Cities Section
-          Card(
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+
+      body: AnimatedContainer(
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeInOut,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            // Popular Cities Section
+            Card(
+              elevation: 5,
+              shadowColor: Colors.blueAccent.withOpacity(0.2),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(18),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.star, color: Colors.amber, size: 28),
+                        const SizedBox(width: 10),
+                        Text(
+                          'Popular Cities',
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: popularCities.map((city) {
+                        return Chip(
+                          elevation: 3,
+                          labelPadding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                          ),
+                          backgroundColor: Colors.blue.shade50,
+                          avatar: const Icon(Icons.location_city, size: 18),
+                          label: Text(city),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          onDeleted: () => _loadWeather(city),
+                          deleteIcon: const Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                          ),
+                          deleteIconColor: Colors.blueAccent,
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Regions Section
+            Text(
+              'Browse by Region',
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+
+            const SizedBox(height: 16),
+
+            ...regions.map((region) {
+              return Card(
+                margin: const EdgeInsets.only(bottom: 14),
+                elevation: 4,
+                shadowColor: Colors.blueAccent.withOpacity(0.15),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Theme(
+                  data: Theme.of(
+                    context,
+                  ).copyWith(dividerColor: Colors.transparent),
+                  child: ExpansionTile(
+                    iconColor: Colors.blueAccent,
+                    collapsedIconColor: Colors.blueAccent,
+                    leading: Icon(Icons.public, color: Colors.blueAccent),
+                    title: Text(
+                      region['name']!,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+
                     children: [
-                      Icon(Icons.star, color: Colors.amber),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Popular Cities',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Major Cities",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey.shade700,
+                                fontSize: 15,
+                              ),
+                            ),
+
+                            const SizedBox(height: 10),
+
+                            Wrap(
+                              spacing: 10,
+                              runSpacing: 10,
+                              children: region['cities']!.split(', ').map((
+                                city,
+                              ) {
+                                return ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blueAccent,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 10,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  onPressed: () => _loadWeather(city),
+                                  child: Text(
+                                    city,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: popularCities.map((city) {
-                      return ActionChip(
-                        label: Text(city),
-                        avatar: const Icon(Icons.location_city, size: 18),
-                        onPressed: () {
-                          ref.read(weatherProvider.notifier).getWeather(city);
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Loading weather for $city...'),
-                              duration: const Duration(seconds: 2),
-                            ),
-                          );
-                        },
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // Regions Section
-          Text(
-            'Browse by Region',
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-
-          ...regions.map((region) {
-            return Card(
-              margin: const EdgeInsets.only(bottom: 12),
-              child: ExpansionTile(
-                leading: Icon(Icons.public, color: Colors.blueAccent),
-                title: Text(
-                  region['name']!,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
                 ),
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Major Cities:',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: region['cities']!.split(', ').map((city) {
-                            return OutlinedButton(
-                              onPressed: () {
-                                ref
-                                    .read(weatherProvider.notifier)
-                                    .getWeather(city);
-                                Navigator.pop(context);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'Loading weather for $city...',
-                                    ),
-                                    duration: const Duration(seconds: 2),
-                                  ),
-                                );
-                              },
-                              child: Text(city),
-                            );
-                          }).toList(),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }),
-        ],
+              );
+            }),
+          ],
+        ),
       ),
     );
   }
