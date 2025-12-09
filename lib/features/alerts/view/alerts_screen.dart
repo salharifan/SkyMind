@@ -105,7 +105,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-              color: Theme.of(context).primaryColor.withOpacity(0.1),
+              color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
               child: Row(
                 children: [
                   const Icon(Icons.calendar_today, size: 16),
@@ -188,15 +188,15 @@ class _AlertsScreenState extends State<AlertsScreen> {
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: Colors.black.withValues(alpha: 0.05),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
                         ],
                         border: Border.all(
                           color: isDark
-                              ? Colors.white.withOpacity(0.1)
-                              : Colors.orange.withOpacity(0.1),
+                              ? Colors.white.withValues(alpha: 0.1)
+                              : Colors.orange.withValues(alpha: 0.1),
                         ),
                       ),
                       child: Material(
@@ -215,7 +215,9 @@ class _AlertsScreenState extends State<AlertsScreen> {
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
                                     color: isDark
-                                        ? Colors.orangeAccent.withOpacity(0.2)
+                                        ? Colors.orangeAccent.withValues(
+                                            alpha: 0.2,
+                                          )
                                         : Colors.orange.shade100,
                                     shape: BoxShape.circle,
                                   ),

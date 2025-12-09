@@ -1,8 +1,6 @@
 import 'package:hive/hive.dart';
 
-@HiveType(typeId: 0)
 class FavouritesModel extends HiveObject {
-  @HiveField(0)
   final String cityName;
 
   FavouritesModel({required this.cityName});

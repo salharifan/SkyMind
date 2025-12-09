@@ -1,6 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
-
-@JsonSerializable()
 class WeatherModel {
   final String cityName;
   final double temperature;

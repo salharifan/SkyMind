@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../home/view_model/home_view_model.dart';
+import '../view_model/regionfilter_view_model.dart';
 
 class RegionFilterScreen extends ConsumerStatefulWidget {
   const RegionFilterScreen({super.key});
@@ -10,27 +11,6 @@ class RegionFilterScreen extends ConsumerStatefulWidget {
 }
 
 class _RegionFilterScreenState extends ConsumerState<RegionFilterScreen> {
-  final List<Map<String, String>> regions = [
-    {'name': 'Asia', 'cities': 'Tokyo, Beijing, Mumbai, Seoul, Bangkok'},
-    {'name': 'Europe', 'cities': 'London, Paris, Berlin, Rome, Madrid'},
-    {
-      'name': 'North America',
-      'cities': 'New York, Los Angeles, Chicago, Toronto, Mexico City',
-    },
-    {
-      'name': 'South America',
-      'cities': 'São Paulo, Buenos Aires, Rio de Janeiro, Lima, Bogotá',
-    },
-    {
-      'name': 'Africa',
-      'cities': 'Cairo, Lagos, Johannesburg, Nairobi, Casablanca',
-    },
-    {
-      'name': 'Oceania',
-      'cities': 'Sydney, Melbourne, Auckland, Brisbane, Perth',
-    },
-  ];
-
   final List<String> popularCities = [
     'London',
     'New York',
@@ -66,6 +46,9 @@ class _RegionFilterScreenState extends ConsumerState<RegionFilterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final regionViewModel = ref.watch(regionFilterProvider);
+    final regions = regionViewModel.regions;
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -86,7 +69,7 @@ class _RegionFilterScreenState extends ConsumerState<RegionFilterScreen> {
             // Popular Cities Section
             Card(
               elevation: 5,
-              shadowColor: Colors.blueAccent.withOpacity(0.2),
+              shadowColor: Colors.blueAccent.withValues(alpha: 0.2),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(18),
               ),
@@ -154,7 +137,7 @@ class _RegionFilterScreenState extends ConsumerState<RegionFilterScreen> {
               return Card(
                 margin: const EdgeInsets.only(bottom: 14),
                 elevation: 4,
-                shadowColor: Colors.blueAccent.withOpacity(0.15),
+                shadowColor: Colors.blueAccent.withValues(alpha: 0.15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18),
                 ),
@@ -167,7 +150,7 @@ class _RegionFilterScreenState extends ConsumerState<RegionFilterScreen> {
                     collapsedIconColor: Colors.blueAccent,
                     leading: Icon(Icons.public, color: Colors.blueAccent),
                     title: Text(
-                      region['name']!,
+                      region.regionName,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -194,9 +177,7 @@ class _RegionFilterScreenState extends ConsumerState<RegionFilterScreen> {
                             Wrap(
                               spacing: 10,
                               runSpacing: 10,
-                              children: region['cities']!.split(', ').map((
-                                city,
-                              ) {
+                              children: region.cities.map((city) {
                                 return ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.blueAccent,
