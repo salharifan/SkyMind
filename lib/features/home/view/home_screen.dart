@@ -274,15 +274,25 @@ class WeatherCard extends StatelessWidget {
             Consumer(
               builder: (context, ref, child) {
                 return ElevatedButton.icon(
-                  onPressed: () {
-                    ref
+                  onPressed: () async {
+                    final success = await ref
                         .read(favoritesProvider.notifier)
                         .addFavorite(weather.cityName);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("${weather.cityName} added to favorites"),
-                      ),
-                    );
+
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            success
+                                ? "${weather.cityName} added to favorites"
+                                : "${weather.cityName} is already in favorites",
+                          ),
+                          backgroundColor: success
+                              ? Colors.green
+                              : Colors.orangeAccent,
+                        ),
+                      );
+                    }
                   },
                   icon: const Icon(Icons.favorite_border),
                   label: const Text("Save"),

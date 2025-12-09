@@ -17,11 +17,22 @@ class FavoritesNotifier extends StateNotifier<List<FavouritesModel>> {
     state = box.values.toList();
   }
 
-  Future<void> addFavorite(String cityName) async {
+  Future<bool> addFavorite(String cityName) async {
     final box = Hive.box<FavouritesModel>('favorites');
+
+    // Check for duplicate
+    final exists = box.values.any(
+      (element) => element.cityName.toLowerCase() == cityName.toLowerCase(),
+    );
+
+    if (exists) {
+      return false; // Already exists
+    }
+
     final city = FavouritesModel(cityName: cityName);
     await box.add(city);
     await loadFavorites();
+    return true; // Added successfully
   }
 
   Future<void> removeFavorite(String cityName) async {
