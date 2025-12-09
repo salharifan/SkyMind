@@ -4,14 +4,13 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:workmanager/workmanager.dart';
 
 import 'core/services/notification_service.dart';
-import 'features/alerts/data/alert_model.dart';
-import 'features/alerts/presentation/pages/alerts_page.dart';
-import 'features/favorites/data/favorite_city_model.dart';
-import 'features/favorites/presentation/pages/favorites_page.dart';
-import 'features/forecast/presentation/pages/forecast_page.dart';
-import 'features/home/presentation/pages/home_page.dart';
-import 'features/settings/presentation/pages/settings_page.dart';
-import 'features/settings/presentation/providers/settings_provider.dart';
+import 'features/alerts/model/alert_model.dart';
+import 'features/alerts/view/alerts_screen.dart';
+import 'features/favourites/model/favourites_model.dart';
+import 'features/favourites/view/favourites_screen.dart';
+import 'features/forecast/view/forecast_screen.dart';
+import 'features/home/view/home_screen.dart';
+import 'features/settings/view_model/settings_view_model.dart';
 
 const String vectorAlertTask = "weatherAlertTask";
 
@@ -36,9 +35,9 @@ void main() async {
 
   // Initialize Hive
   await Hive.initFlutter();
-  Hive.registerAdapter(FavoriteCityAdapter());
+  Hive.registerAdapter(FavouritesModelAdapter());
   Hive.registerAdapter(AlertModelAdapter());
-  await Hive.openBox<FavoriteCity>('favorites');
+  await Hive.openBox<FavouritesModel>('favorites');
   await Hive.openBox<AlertModel>('alerts');
 
   // Initialize Notifications
@@ -46,7 +45,7 @@ void main() async {
   await notificationService.init();
 
   // Initialize Workmanager
-  Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+  Workmanager().initialize(callbackDispatcher);
   Workmanager().registerPeriodicTask(
     "1",
     vectorAlertTask,
@@ -62,7 +61,8 @@ class SkyMindApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final themeMode = ref.watch(themeProvider);
+    final settingsState = ref.watch(settingsProvider);
+    final themeMode = settingsState.themeMode;
 
     return MaterialApp(
       title: 'SkyMind',
@@ -72,7 +72,7 @@ class SkyMindApp extends ConsumerWidget {
         useMaterial3: true,
         primarySwatch: Colors.blue,
         brightness: Brightness.light,
-        scaffoldBackgroundColor: Colors.white,
+        scaffoldBackgroundColor: Colors.lightBlue.shade50,
         appBarTheme: const AppBarTheme(
           elevation: 0,
           backgroundColor: Colors.transparent,
@@ -116,12 +116,11 @@ class _MainNavigationState extends State<MainNavigation>
     with TickerProviderStateMixin {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = const [
-    HomePage(),
-    FavoritesPage(),
-    ForecastPage(city: "London"), // Default/Demo city
-    AlertsPage(),
-    SettingsPage(),
+  final List<Widget> _pages = [
+    HomeScreen(),
+    FavouritesScreen(),
+    ForecastScreen(city: "London"), // Default/Demo city
+    AlertsScreen(),
   ];
 
   late AnimationController _controller;
@@ -189,11 +188,6 @@ class _MainNavigationState extends State<MainNavigation>
             icon: Icon(Icons.notifications_outlined),
             selectedIcon: Icon(Icons.notifications),
             label: 'Alerts',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.settings_outlined),
-            selectedIcon: Icon(Icons.settings),
-            label: 'Settings',
           ),
         ],
       ),
