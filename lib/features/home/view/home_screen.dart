@@ -8,6 +8,7 @@ import '../../forecast/view/forecast_screen.dart';
 import '../../favourites/view_model/favourites_view_model.dart';
 import '../../settings/view/settings_screen.dart';
 import '../../settings/view_model/settings_view_model.dart';
+import '../../region/view/regionfilter_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -266,8 +267,10 @@ class WeatherCard extends StatelessWidget {
           },
         ),
         const SizedBox(height: 15),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 8,
+          runSpacing: 8,
           children: [
             Consumer(
               builder: (context, ref, child) {
@@ -302,6 +305,20 @@ class WeatherCard extends StatelessWidget {
               },
               icon: const Icon(Icons.bar_chart),
               label: const Text("Forecast"),
+            ),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const RegionFilterScreen()),
+                );
+              },
+              icon: const Icon(Icons.location_on),
+              label: const Text("Region"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orangeAccent,
+                foregroundColor: Colors.white,
+              ),
             ),
           ],
         ),
