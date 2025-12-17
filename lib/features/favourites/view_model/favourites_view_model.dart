@@ -20,19 +20,17 @@ class FavoritesNotifier extends StateNotifier<List<FavouritesModel>> {
   }
 
   Future<bool> addFavorite(String cityName) async {
-    // Check for duplicate locally first to avoid unnecessary DB calls if strict uniqueness logic is needed immediately
-    // Or rely on DB Constraints. Here we check logic similar to before.
     final exists = state.any(
       (element) => element.cityName.toLowerCase() == cityName.toLowerCase(),
     );
 
     if (exists) {
-      return false; // Already exists
+      return false;
     }
 
     await _dbService.insertFavorite(cityName);
     await loadFavorites();
-    return true; // Added successfully
+    return true;
   }
 
   Future<void> removeFavorite(String cityName) async {

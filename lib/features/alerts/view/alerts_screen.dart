@@ -1,35 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../model/alert_model.dart';
+import '../view_model/alerts_view_model.dart';
 
-class AlertsScreen extends StatefulWidget {
+class AlertsScreen extends ConsumerStatefulWidget {
   const AlertsScreen({super.key});
 
   @override
-  State<AlertsScreen> createState() => _AlertsScreenState();
+  ConsumerState<AlertsScreen> createState() => _AlertsScreenState();
 }
 
-class _AlertsScreenState extends State<AlertsScreen> {
+class _AlertsScreenState extends ConsumerState<AlertsScreen> {
   DateTimeRange? _selectedDateRange;
 
   Future<void> _pickDateRange() async {
-    // final DateTime now = DateTime.now();
     final picked = await showDateRangePicker(
       context: context,
       firstDate: DateTime(2020),
       lastDate: DateTime(2100),
       initialDateRange: _selectedDateRange,
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.deepPurple,
-              brightness: Theme.of(context).brightness,
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
     if (picked != null) {
       setState(() {
@@ -46,6 +35,8 @@ class _AlertsScreenState extends State<AlertsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final alertsState = ref.watch(alertsProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Weather Alerts"),
@@ -74,12 +65,22 @@ class _AlertsScreenState extends State<AlertsScreen> {
                 builder: (context) => AlertDialog(
                   title: const Text("Clear All Alerts?"),
                   content: const Text(
-                    "This feature is temporarily disabled during migration.",
+                    "Are you sure you want to delete all weather alerts?",
                   ),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text("OK"),
+                      child: const Text("Cancel"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        ref.read(alertsProvider.notifier).clearAlerts();
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        "Clear",
+                        style: TextStyle(color: Colors.red),
+                      ),
                     ),
                   ],
                 ),
@@ -109,29 +110,8 @@ class _AlertsScreenState extends State<AlertsScreen> {
           Expanded(
             child: Builder(
               builder: (context) {
-                // Mock data since Hive is removed and we haven't implemented Sqflite for Alerts yet
-                var alerts = [
-                  AlertModel(
-                    title: "Heavy Rain",
-                    message: "Heavy rain expected in London this evening.",
-                    dateTime: DateTime.now(),
-                  ),
-                  AlertModel(
-                    title: "High Wind",
-                    message: "Strong winds in Tokyo tomorrow morning.",
-                    dateTime: DateTime.now().add(const Duration(days: 1)),
-                  ),
-                  AlertModel(
-                    title: "Heat Wave",
-                    message: "Extreme heat warning for Dubai.",
-                    dateTime: DateTime.now().subtract(const Duration(hours: 5)),
-                  ),
-                ];
+                var alerts = [...alertsState];
 
-                // Sort by date descending
-                alerts.sort((a, b) => b.dateTime.compareTo(a.dateTime));
-
-                // Apply filter
                 if (_selectedDateRange != null) {
                   alerts = alerts.where((alert) {
                     return alert.dateTime.isAfter(
@@ -199,85 +179,71 @@ class _AlertsScreenState extends State<AlertsScreen> {
                               : Colors.orange.withValues(alpha: 0.1),
                         ),
                       ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(16),
-                          onTap: () {
-                            // detailed view if needed
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: isDark
-                                        ? Colors.orangeAccent.withValues(
-                                            alpha: 0.2,
-                                          )
-                                        : Colors.orange.shade100,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.warning_rounded,
-                                    color: isDark
-                                        ? Colors.orangeAccent
-                                        : Colors.deepOrange,
-                                    size: 24,
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? Colors.orangeAccent.withValues(alpha: 0.2)
+                                    : Colors.orange.shade100,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.warning_rounded,
+                                color: isDark
+                                    ? Colors.orangeAccent
+                                    : Colors.deepOrange,
+                                size: 24,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            alert.title,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                              color: isDark
-                                                  ? Colors.white
-                                                  : Colors.black87,
-                                            ),
-                                          ),
-                                          Text(
-                                            DateFormat(
-                                              'MMM d, h:mm a',
-                                            ).format(alert.dateTime),
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: isDark
-                                                  ? Colors.grey[500]
-                                                  : Colors.grey[500],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 8),
                                       Text(
-                                        alert.message,
+                                        alert.title,
                                         style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
                                           color: isDark
-                                              ? Colors.grey[300]
-                                              : Colors.black54,
-                                          height: 1.4,
+                                              ? Colors.white
+                                              : Colors.black87,
+                                        ),
+                                      ),
+                                      Text(
+                                        DateFormat(
+                                          'MMM d, h:mm a',
+                                        ).format(alert.dateTime),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey[500],
                                         ),
                                       ),
                                     ],
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    alert.message,
+                                    style: TextStyle(
+                                      color: isDark
+                                          ? Colors.grey[300]
+                                          : Colors.black54,
+                                      height: 1.4,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
                     );

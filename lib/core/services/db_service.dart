@@ -16,7 +16,6 @@ class DatabaseService {
   }
 
   Future<Database> _initDatabase() async {
-    // Get the path to the database
     String path = join(await getDatabasesPath(), 'skymind.db');
     return await openDatabase(
       path,
@@ -26,6 +25,14 @@ class DatabaseService {
           CREATE TABLE favorites(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             cityName TEXT UNIQUE
+          )
+          ''');
+        await db.execute('''
+          CREATE TABLE alerts(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT,
+            message TEXT,
+            dateTime TEXT
           )
           ''');
       },
@@ -54,5 +61,28 @@ class DatabaseService {
       where: 'cityName = ?',
       whereArgs: [cityName],
     );
+  }
+
+  Future<int> insertAlert(
+    String title,
+    String message,
+    DateTime dateTime,
+  ) async {
+    final db = await database;
+    return await db.insert('alerts', {
+      'title': title,
+      'message': message,
+      'dateTime': dateTime.toIso8601String(),
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> getAlerts() async {
+    final db = await database;
+    return await db.query('alerts', orderBy: 'dateTime DESC');
+  }
+
+  Future<int> clearAllAlerts() async {
+    final db = await database;
+    return await db.delete('alerts');
   }
 }

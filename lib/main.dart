@@ -112,7 +112,7 @@ class _MainNavigationState extends State<MainNavigation>
   final List<Widget> _pages = [
     HomeScreen(),
     FavouritesScreen(),
-    ForecastScreen(city: "London"), // Default/Demo city
+    ForecastScreen(city: "London"),
     RegionFilterScreen(),
     AlertsScreen(),
   ];
@@ -132,11 +132,6 @@ class _MainNavigationState extends State<MainNavigation>
       end: 1.0,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
     _controller.forward();
-
-    // Add dummy alerts if empty
-    // Add dummy alerts if empty - using in-memory provider or potentially Sqflite for alerts later
-    // For now we will just let the provider initialize normally or skip dummy data injection
-    // since Hive is gone and we haven't built an AlertsTable in Sqflite yet.
   }
 
   void _onItemTapped(int index) {
@@ -160,10 +155,7 @@ class _MainNavigationState extends State<MainNavigation>
     return Scaffold(
       body: FadeTransition(
         opacity: _fadeAnimation,
-        child: IndexedStack(
-          index: _selectedIndex,
-          children: _pages, // Using IndexedStack to preserve state
-        ),
+        child: IndexedStack(index: _selectedIndex, children: _pages),
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,

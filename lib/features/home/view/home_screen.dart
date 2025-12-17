@@ -102,9 +102,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 hintText: "Enter city",
                 prefixIcon: const Icon(Icons.location_city),
                 filled: true,
-                fillColor: Colors.white.withValues(
-                  alpha: 0.8,
-                ), // Updated for deprecation
+                fillColor: Colors.white.withValues(alpha: 0.8),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
                   borderSide: BorderSide.none,
@@ -170,7 +168,7 @@ class WeatherCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.2), // Glassmorphism effect
+        color: Colors.white.withOpacity(0.2),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
         boxShadow: const [
