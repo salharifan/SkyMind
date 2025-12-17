@@ -1,4 +1,3 @@
-// Helper functions
 import 'package:intl/intl.dart';
 
 String formatDate(DateTime date) {
