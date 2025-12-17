@@ -34,20 +34,13 @@ class _RegionFilterScreenState extends ConsumerState<RegionFilterScreen> {
   void _loadWeather(String city) {
     ref.read(weatherProvider.notifier).getWeather(city);
 
-    // We are in a tab, so we don't pop. We just notify.
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Weather loaded for $city. Check Home tab!'),
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        action: SnackBarAction(
-          label: 'Go to Home',
-          onPressed: () {
-            // Ideally we would switch tab here, but for now just letting user know.
-            // Accessing ancestor state is fragile without context or riverpod for tab state.
-          },
-        ),
+        action: SnackBarAction(label: 'Go to Home', onPressed: () {}),
       ),
     );
   }
@@ -57,7 +50,6 @@ class _RegionFilterScreenState extends ConsumerState<RegionFilterScreen> {
     final regionViewModel = ref.watch(regionFilterProvider);
     final allRegions = regionViewModel.regions;
 
-    // Filter logic
     final query = _searchController.text.toLowerCase();
     final displayedRegions = allRegions.where((region) {
       return region.regionName.toLowerCase().contains(query);
@@ -102,9 +94,6 @@ class _RegionFilterScreenState extends ConsumerState<RegionFilterScreen> {
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 children: [
-                  // Popular Cities Section - Only show if not searching or if requested?
-                  // Let's keep it but maybe hide if search doesn't match?
-                  // The user specifically asked to type REGION. So filtering regions is key.
                   if (query.isEmpty) ...[
                     Card(
                       elevation: 5,
@@ -207,8 +196,7 @@ class _RegionFilterScreenState extends ConsumerState<RegionFilterScreen> {
                               fontSize: 16,
                             ),
                           ),
-                          initiallyExpanded:
-                              query.isNotEmpty, // Auto expand when searching
+                          initiallyExpanded: query.isNotEmpty,
 
                           children: [
                             Padding(
