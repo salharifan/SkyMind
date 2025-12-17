@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import '../../core/services/db_service.dart';
 import '../model/favourites_model.dart';
 
 final favoritesProvider =
@@ -8,20 +8,21 @@ final favoritesProvider =
     });
 
 class FavoritesNotifier extends StateNotifier<List<FavouritesModel>> {
+  final DatabaseService _dbService = DatabaseService();
+
   FavoritesNotifier() : super([]) {
     loadFavorites();
   }
 
   Future<void> loadFavorites() async {
-    final box = Hive.box<FavouritesModel>('favorites');
-    state = box.values.toList();
+    final cityNames = await _dbService.getFavorites();
+    state = cityNames.map((name) => FavouritesModel(cityName: name)).toList();
   }
 
   Future<bool> addFavorite(String cityName) async {
-    final box = Hive.box<FavouritesModel>('favorites');
-
-    // Check for duplicate
-    final exists = box.values.any(
+    // Check for duplicate locally first to avoid unnecessary DB calls if strict uniqueness logic is needed immediately
+    // Or rely on DB Constraints. Here we check logic similar to before.
+    final exists = state.any(
       (element) => element.cityName.toLowerCase() == cityName.toLowerCase(),
     );
 
@@ -29,20 +30,13 @@ class FavoritesNotifier extends StateNotifier<List<FavouritesModel>> {
       return false; // Already exists
     }
 
-    final city = FavouritesModel(cityName: cityName);
-    await box.add(city);
+    await _dbService.insertFavorite(cityName);
     await loadFavorites();
     return true; // Added successfully
   }
 
   Future<void> removeFavorite(String cityName) async {
-    final box = Hive.box<FavouritesModel>('favorites');
-    final key = box.values.toList().indexWhere(
-      (element) => element.cityName == cityName,
-    );
-    if (key != -1) {
-      await box.deleteAt(key);
-      await loadFavorites();
-    }
+    await _dbService.deleteFavorite(cityName);
+    await loadFavorites();
   }
 }

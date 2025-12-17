@@ -1,37 +1,58 @@
-import 'package:hive_flutter/hive_flutter.dart';
-import '../../features/favourites/model/favourites_model.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 
-abstract class FavoritesDataSource {
-  Future<List<FavouritesModel>> getFavorites();
-  Future<void> addFavorite(FavouritesModel city);
-  Future<void> removeFavorite(String cityName);
-}
+class DatabaseService {
+  static final DatabaseService _instance = DatabaseService._internal();
+  static Database? _database;
 
-class FavoritesLocalDataSource implements FavoritesDataSource {
-  final Box<FavouritesModel> box;
+  factory DatabaseService() => _instance;
 
-  FavoritesLocalDataSource(this.box);
+  DatabaseService._internal();
 
-  @override
-  Future<List<FavouritesModel>> getFavorites() async {
-    return box.values.toList();
+  Future<Database> get database async {
+    if (_database != null) return _database!;
+    _database = await _initDatabase();
+    return _database!;
   }
 
-  @override
-  Future<void> addFavorite(FavouritesModel city) async {
-    if (!box.values.any((e) => e.cityName == city.cityName)) {
-      await box.add(city);
-    }
-  }
-
-  @override
-  Future<void> removeFavorite(String cityName) async {
-    final cityToDelete = box.values.firstWhere(
-      (element) => element.cityName == cityName,
-      orElse: () => FavouritesModel(cityName: ''),
+  Future<Database> _initDatabase() async {
+    // Get the path to the database
+    String path = join(await getDatabasesPath(), 'skymind.db');
+    return await openDatabase(
+      path,
+      version: 1,
+      onCreate: (db, version) async {
+        await db.execute('''
+          CREATE TABLE favorites(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            cityName TEXT UNIQUE
+          )
+          ''');
+      },
     );
-    if (cityToDelete.cityName.isNotEmpty && cityToDelete.isInBox) {
-      await cityToDelete.delete();
-    }
+  }
+
+  Future<int> insertFavorite(String cityName) async {
+    final db = await database;
+    return await db.insert('favorites', {
+      'cityName': cityName,
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<List<String>> getFavorites() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query('favorites');
+    return List.generate(maps.length, (i) {
+      return maps[i]['cityName'] as String;
+    });
+  }
+
+  Future<int> deleteFavorite(String cityName) async {
+    final db = await database;
+    return await db.delete(
+      'favorites',
+      where: 'cityName = ?',
+      whereArgs: [cityName],
+    );
   }
 }

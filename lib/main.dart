@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:workmanager/workmanager.dart';
 
 import 'core/services/notification_service.dart';
@@ -33,13 +32,6 @@ void callbackDispatcher() {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize Hive
-  await Hive.initFlutter();
-  Hive.registerAdapter(FavouritesModelAdapter());
-  Hive.registerAdapter(AlertModelAdapter());
-  await Hive.openBox<FavouritesModel>('favorites');
-  await Hive.openBox<AlertModel>('alerts');
 
   // Initialize Notifications
   final notificationService = NotificationService();
@@ -142,28 +134,9 @@ class _MainNavigationState extends State<MainNavigation>
     _controller.forward();
 
     // Add dummy alerts if empty
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final alertsBox = Hive.box<AlertModel>('alerts');
-      if (alertsBox.isEmpty) {
-        alertsBox.addAll([
-          AlertModel(
-            title: "Heavy Rain",
-            message: "Heavy rain expected in London this evening.",
-            dateTime: DateTime.now(),
-          ),
-          AlertModel(
-            title: "High Wind",
-            message: "Strong winds in Tokyo tomorrow morning.",
-            dateTime: DateTime.now().add(const Duration(days: 1)),
-          ),
-          AlertModel(
-            title: "Heat Wave",
-            message: "Extreme heat warning for Dubai.",
-            dateTime: DateTime.now().subtract(const Duration(hours: 5)),
-          ),
-        ]);
-      }
-    });
+    // Add dummy alerts if empty - using in-memory provider or potentially Sqflite for alerts later
+    // For now we will just let the provider initialize normally or skip dummy data injection
+    // since Hive is gone and we haven't built an AlertsTable in Sqflite yet.
   }
 
   void _onItemTapped(int index) {

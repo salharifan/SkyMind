@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 
-class AlertModel extends HiveObject {
+class AlertModel {
   final String title;
   final String message;
   final DateTime dateTime;
