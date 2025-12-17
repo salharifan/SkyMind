@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workmanager/workmanager.dart';
 
 import 'core/services/notification_service.dart';
-import 'features/alerts/model/alert_model.dart';
+
 import 'features/alerts/view/alerts_screen.dart';
-import 'features/favourites/model/favourites_model.dart';
+
 import 'features/favourites/view/favourites_screen.dart';
 import 'features/forecast/view/forecast_screen.dart';
 import 'features/home/view/home_screen.dart';

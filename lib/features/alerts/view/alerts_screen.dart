@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import '../model/alert_model.dart';
 
@@ -75,22 +74,12 @@ class _AlertsScreenState extends State<AlertsScreen> {
                 builder: (context) => AlertDialog(
                   title: const Text("Clear All Alerts?"),
                   content: const Text(
-                    "This action cannot be undone. Are you sure you want to delete all alerts?",
+                    "This feature is temporarily disabled during migration.",
                   ),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text("Cancel"),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Hive.box<AlertModel>('alerts').clear();
-                        Navigator.pop(context);
-                      },
-                      child: const Text(
-                        "Delete All",
-                        style: TextStyle(color: Colors.red),
-                      ),
+                      child: const Text("OK"),
                     ),
                   ],
                 ),
@@ -118,10 +107,45 @@ class _AlertsScreenState extends State<AlertsScreen> {
               ),
             ),
           Expanded(
-            child: ValueListenableBuilder(
-              valueListenable: Hive.box<AlertModel>('alerts').listenable(),
-              builder: (context, Box<AlertModel> box, _) {
-                if (box.isEmpty) {
+            child: Builder(
+              builder: (context) {
+                // Mock data since Hive is removed and we haven't implemented Sqflite for Alerts yet
+                var alerts = [
+                  AlertModel(
+                    title: "Heavy Rain",
+                    message: "Heavy rain expected in London this evening.",
+                    dateTime: DateTime.now(),
+                  ),
+                  AlertModel(
+                    title: "High Wind",
+                    message: "Strong winds in Tokyo tomorrow morning.",
+                    dateTime: DateTime.now().add(const Duration(days: 1)),
+                  ),
+                  AlertModel(
+                    title: "Heat Wave",
+                    message: "Extreme heat warning for Dubai.",
+                    dateTime: DateTime.now().subtract(const Duration(hours: 5)),
+                  ),
+                ];
+
+                // Sort by date descending
+                alerts.sort((a, b) => b.dateTime.compareTo(a.dateTime));
+
+                // Apply filter
+                if (_selectedDateRange != null) {
+                  alerts = alerts.where((alert) {
+                    return alert.dateTime.isAfter(
+                          _selectedDateRange!.start.subtract(
+                            const Duration(seconds: 1),
+                          ),
+                        ) &&
+                        alert.dateTime.isBefore(
+                          _selectedDateRange!.end.add(const Duration(days: 1)),
+                        );
+                  }).toList();
+                }
+
+                if (alerts.isEmpty) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -141,30 +165,6 @@ class _AlertsScreenState extends State<AlertsScreen> {
                         ),
                       ],
                     ),
-                  );
-                }
-
-                var alerts = box.values.toList();
-                // Sort by date descending
-                alerts.sort((a, b) => b.dateTime.compareTo(a.dateTime));
-
-                // Apply filter
-                if (_selectedDateRange != null) {
-                  alerts = alerts.where((alert) {
-                    return alert.dateTime.isAfter(
-                          _selectedDateRange!.start.subtract(
-                            const Duration(seconds: 1),
-                          ),
-                        ) &&
-                        alert.dateTime.isBefore(
-                          _selectedDateRange!.end.add(const Duration(days: 1)),
-                        );
-                  }).toList();
-                }
-
-                if (alerts.isEmpty) {
-                  return const Center(
-                    child: Text("No alerts found in selected range."),
                   );
                 }
 

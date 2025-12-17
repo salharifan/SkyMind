@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/services/db_service.dart';
+import '../../../core/services/db_service.dart';
 import '../model/favourites_model.dart';
 
 final favoritesProvider =
