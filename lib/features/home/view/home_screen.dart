@@ -245,14 +245,14 @@ class WeatherCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Text(
-                        "💧 ${weather.humidity}%",
+                        "${weather.humidity}%",
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                         ),
                       ),
                       Text(
-                        "💨 ${wind.toStringAsFixed(1)} ${settings.windSpeedUnit}",
+                        "${wind.toStringAsFixed(1)} ${settings.windSpeedUnit}",
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
