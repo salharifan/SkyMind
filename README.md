@@ -23,9 +23,10 @@ SkyMind is a flutter-based mobile application developed for tracking weather for
 *   Users can change the app theme, change the displaying units of temperature and wind speed, and turn on or off weather alerts for cities by using the settings screen
 
 ## Technologies Used
-*   Flutter as the main framework
-*   Android Studio as the code editor and to run the app
-*   Dart as the programming language
-*   Git and GitHub as the version control
-*   SQlite as the database management system
-*   Provider as StateManagement
+*   Flutter & Dart
+*   Riverpod for state management
+*   SQLite (sqflite) for local data persistence (Favorites & Alerts)
+*   Dio for API requests (OpenWeatherMap)
+*   fl_chart for weather visualization
+*   Workmanager & Flutter Local Notifications for background tasks
+*   Git & GitHub for version control
