@@ -143,6 +143,23 @@ class _AlertsScreenState extends ConsumerState<AlertsScreen> {
                             fontSize: 16,
                           ),
                         ),
+                        const SizedBox(height: 24),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            ref
+                                .read(alertsProvider.notifier)
+                                .addAlert(
+                                  "Test Alert",
+                                  "This is a manually triggered alert to verify functionality.",
+                                );
+                          },
+                          icon: const Icon(Icons.add_alert),
+                          label: const Text("Generate Test Alert"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange.shade100,
+                            foregroundColor: Colors.deepOrange,
+                          ),
+                        ),
                       ],
                     ),
                   );

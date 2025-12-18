@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workmanager/workmanager.dart';
 
 import 'core/services/notification_service.dart';
+import 'core/services/db_service.dart';
 
 import 'features/alerts/view/alerts_screen.dart';
 
@@ -20,6 +21,15 @@ void callbackDispatcher() {
     if (task == vectorAlertTask) {
       final notificationService = NotificationService();
       await notificationService.init();
+
+      // Record alert in SQLite database
+      final dbService = DatabaseService();
+      await dbService.insertAlert(
+        "Background Update",
+        "Scheduled weather check performed successfully.",
+        DateTime.now(),
+      );
+
       await notificationService.showNotification(
         0,
         "Weather Alert",
